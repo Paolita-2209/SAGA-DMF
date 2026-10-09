@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class livre extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'title',
@@ -29,9 +29,9 @@ class livre extends Model
     }
 
     // Un livre a plusieurs emprunts
-    public function emprunts(): HasMany
+    public function livres(): HasMany
     {
-        return $this->hasMany(emprunts::class);
+        return $this->hasMany(livre::class);
     }
 
     // Vérifie si le livre est disponible
@@ -40,3 +40,4 @@ class livre extends Model
         return $this->available_quantity > 0;
     }
 }
+

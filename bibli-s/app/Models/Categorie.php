@@ -6,15 +6,17 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class categorie extends Model
+class Categorie extends Model
 {
-   protected $fillable = [
+      use HasFactory;
+
+    protected $fillable = [
         'name',
         'description',
     ];
 
     // Une catégorie a plusieurs livres
-    public function livre(): HasMany
+    public function livres(): HasMany
     {
         return $this->hasMany(livre::class);
     }
