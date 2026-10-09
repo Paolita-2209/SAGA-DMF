@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class emprunts extends Model
+class emprunt extends Model
 {
-     use HasFactory;
+    use HasFactory;
 
     protected $fillable = [
         'user_id',
@@ -32,7 +32,7 @@ class emprunts extends Model
     }
 
     // Un emprunt appartient à un livre
-    public function livre(): BelongsTo
+    public function livres(): BelongsTo
     {
         return $this->belongsTo(livre::class);
     }

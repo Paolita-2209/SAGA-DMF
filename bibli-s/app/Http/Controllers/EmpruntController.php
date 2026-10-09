@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\emprunts;
+use App\Models\emprunt;
 use Illuminate\Http\Request;
 
-class EmpruntsController extends Controller
+class EmpruntController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -34,7 +34,7 @@ class EmpruntsController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(emprunts $emprunts)
+    public function show(emprunt $emprunt)
     {
         //
     }
@@ -42,7 +42,7 @@ class EmpruntsController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(emprunts $emprunts)
+    public function edit(emprunt $emprunt)
     {
         //
     }
@@ -50,7 +50,7 @@ class EmpruntsController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, emprunts $emprunts)
+    public function update(Request $request, emprunt $emprunt)
     {
         //
     }
@@ -58,7 +58,7 @@ class EmpruntsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(emprunts $emprunts)
+    public function destroy(emprunt $emprunt)
     {
         //
     }
