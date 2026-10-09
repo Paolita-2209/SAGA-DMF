@@ -9,8 +9,7 @@ class CategoryController extends Controller
 {
     public function index()
     {
-        //$categories = Category::withCount('books')->get();
-        $categories = Category::all();
+        $categories = Category::withCount('books')->get();
         return view('categories.index', compact('categories'));
     }
 
@@ -44,6 +43,9 @@ class CategoryController extends Controller
 
     public function destroy(Category $category)
     {
+        if ($category->books()->exists()) {
+            return back()->with('error', 'Impossible de supprimer une catégorie avec des livres associés');
+        }
         $category->delete();
         return redirect()->route('categories.index')->with('success', 'Catégorie supprimée');
     }

@@ -18,6 +18,6 @@ class Categorie extends Model
     // Une catégorie a plusieurs livres
     public function livres(): HasMany
     {
-        return $this->hasMany(livre::class);
+        return $this->hasMany(livre::class, );
     }
 }

@@ -10,7 +10,7 @@
     @foreach($categories as $category)
     <tr>
         <td>{{ $category->name }}</td>
-        <!-- <td>{{ $category->books_count }}</td> -->
+         <td>{{ $category->books_count }}</td>
         <td>
             <a href="{{ route('categories.edit', $category) }}">Modifier</a>
             <form action="{{ route('categories.destroy', $category) }}" method="POST" style="display:inline">
