@@ -4,62 +4,74 @@ namespace App\Http\Controllers;
 
 use App\Models\Categorie;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CategorieController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $categories = Categorie::latest()->paginate(10);
+
+        return view('categories.index', compact('categories'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        return view('categories.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name'        => 'required|string|max:100|unique:categories,name',
+            'description' => 'required|string|max:255',
+        ]);
+
+        Categorie::create($data);
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Catégorie créée avec succès.');
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(Categorie $categorie)
     {
-        //
+        $categorie->load('livres');
+
+        return view('categories.show', compact('categorie'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit(Categorie $categorie)
     {
-        //
+        return view('categories.edit', compact('categorie'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, Categorie $categorie)
     {
-        //
+        $data = $request->validate([
+            'name' => [
+                'required', 'string', 'max:100',
+                Rule::unique('categories', 'name')->ignore($categorie->getKey(), $categorie->getKeyName()),
+            ],
+            'description' => 'required|string|max:255',
+        ]);
+
+        $categorie->update($data);
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Catégorie mise à jour avec succès.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(Categorie $categorie)
     {
-        //
+        if ($categorie->livres()->exists()) {
+            return back()->withErrors([
+                'categorie' => 'Impossible de supprimer une catégorie qui contient des livres.',
+            ]);
+        }
+
+        $categorie->delete();
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Catégorie supprimée avec succès.');
     }
 }

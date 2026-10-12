@@ -1,0 +1,13 @@
+<x-osome-layout title="Nouveau livre">
+    <x-slot name="breadcrumb"><a href="{{ route('livres.index') }}">Livres</a> / Nouveau</x-slot>
+    <x-slot name="actions">
+        <a href="{{ route('livres.index') }}" class="o-btn">Annuler</a>
+        <button type="submit" form="livre-form" class="o-btn o-btn-primary">Enregistrer</button>
+    </x-slot>
+
+    <form id="livre-form" method="POST" action="{{ route('livres.store') }}"
+          enctype="multipart/form-data" class="o-sheet o-form">
+        @csrf
+        @include('livres._form')
+    </form>
+</x-osome-layout>

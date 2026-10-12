@@ -11,19 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-      Schema::create('emprunts', function (Blueprint $table) {
+     Schema::create('emprunts', function (Blueprint $table) {
     $table->id();
-    $table->foreignId('user_id')
-          ->constrained('users')
-          ->onDelete('cascade');
-    $table->foreignId('livre_id')
-          ->constrained('livres')
-          ->onDelete('cascade');
-    $table->date('emprunt_at');
+    $table->foreignId('user_id')->constrained('users');  
+    $table->foreignId('book_id')->constrained('livres');
+    $table->string('borrower_name');                     
+    $table->string('borrower_phone')->nullable();
+    $table->string('borrower_email')->nullable();
+    $table->date('loaned_at');
     $table->date('due_date');
-    $table->date('return_at')->nullable();
-    $table->enum('status', ['en_cours', 'retourné', 'en_retard'])
-          ->default('en_cours');
+    $table->date('returned_at')->nullable();
+    $table->string('status')->default('en_cours');
     $table->timestamps();
 });
     }

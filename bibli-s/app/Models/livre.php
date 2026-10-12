@@ -7,37 +7,34 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class livre extends Model
+class Livre extends Model
+
 {
     use HasFactory;
 
     protected $fillable = [
         'title',
         'author',
-        'isbn',
+        'isbn', 
         'category_id',
-        'quantity',
-        'available_quantity',
-        'image',
+        'quantity', 
+        'available_quantity', 
+        'image', 
         'description',
     ];
 
-    // Un livre appartient à une catégorie
-    public function category(): BelongsTo
-    {
-        return $this->belongsTo(Categorie::class);
-    }
-
-    // Un livre a plusieurs emprunts
-    public function livres(): HasMany
-    {
-        return $this->hasMany(livre::class);
-    }
-
-    // Vérifie si le livre est disponible
-    public function isAvailable(): bool
-    {
-        return $this->available_quantity > 0;
-    }
+    public function livres()
+{
+    return $this->hasMany(Livre::class, 'category_id');
 }
 
+    public function categorie()
+{
+    return $this->belongsTo(Categorie::class, 'category_id');
+}
+
+    public function isAvailable(): bool
+    {
+        return $this->available_quantity > 1;
+    }
+}

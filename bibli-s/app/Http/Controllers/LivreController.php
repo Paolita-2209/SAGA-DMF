@@ -2,64 +2,98 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\livre;
+use App\Models\Livre;
+use App\Models\Categorie;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class LivreController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        $livres = Livre::latest()->paginate(10);
+        return view('livres.index', compact('livres'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
     public function create()
     {
-        //
+        $categories = Categorie::all();
+        return view('livres.create', compact('categories'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'title'              => 'required|string|max:255',
+            'author'             => 'required|string|max:100',
+            'isbn'               => 'required|string|max:100|unique:livres,isbn',
+            'category_id'        => 'required|exists:categories,id',
+            'quantity'           => 'required|integer|min:0',
+            'available_quantity' => 'required|integer|min:0|lte:quantity',
+            'image'              => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'description'        => 'nullable|string',
+        ]);
+
+        if ($request->hasFile('image')) {
+            $data['image'] = $request->file('image')->store('livres', 'public');
+        }
+
+        Livre::create($data);
+
+        return redirect()->route('livres.index')
+            ->with('success', 'Livre ajouté avec succès.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(livre $livre)
+    public function show(Livre $livre)
     {
-        //
+        return view('livres.show', compact('livre'));
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(livre $livre)
+    public function edit(Livre $livre)
     {
-        //
+        $categories = Categorie::all();
+        return view('livres.edit', compact('livre', 'categories'));
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, livre $livre)
+    public function update(Request $request, Livre $livre)
     {
-        //
+        $data = $request->validate([
+            'title'              => 'required|string|max:255',
+            'author'             => 'required|string|max:100',
+            'isbn'               => [
+                'required', 'string', 'max:100',
+                Rule::unique('livres', 'isbn')->ignore($livre->getKey(), $livre->getKeyName()),
+            ],
+            'category_id' => 'required|exists:categories,id',
+            'quantity'           => 'required|integer|min:0',
+            'available_quantity' => 'required|integer|min:0|lte:quantity',
+            'image'              => 'nullable|image|mimes:jpg,jpeg,png|max:2048',
+            'description'        => 'nullable|string',
+        ]);
+
+        if ($request->hasFile('image')) {
+            if ($livre->image) {
+                Storage::disk('public')->delete($livre->image);
+            }
+            $data['image'] = $request->file('image')->store('livres', 'public');
+        }
+
+        $livre->update($data);
+
+        return redirect()->route('livres.index')
+            ->with('success', 'Livre mis à jour avec succès.');
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(livre $livre)
+    public function destroy(Livre $livre)
     {
-        //
+        if ($livre->image) {
+            Storage::disk('public')->delete($livre->image);
+        }
+
+        $livre->delete();
+
+        return redirect()->route('livres.index')
+            ->with('success', 'Livre supprimé avec succès.');
     }
 }

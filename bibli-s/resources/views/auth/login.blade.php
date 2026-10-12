@@ -1,47 +1,63 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion</title>
 
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/index.css'])
+</head>
+<body>
+
+<section>
     <form method="POST" action="{{ route('login') }}">
         @csrf
 
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        <h1>Connexion</h1>
+
+        {{-- Message de statut (ex. mot de passe réinitialisé) --}}
+        @if (session('status'))
+            <div style="color:#27ae60; margin-bottom:10px; font-size:14px;">
+                {{ session('status') }}
+            </div>
+        @endif
+
+        {{-- Erreurs de validation --}}
+        @if ($errors->any())
+            <div style="color:#e74c3c; margin-bottom:10px; font-size:14px;">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
+        <div class="input-box">
+            <input type="email" name="email" id="email" placeholder="hello@gmail.com"
+                   value="{{ old('email') }}" required autofocus autocomplete="username">
+            <i class="fa-solid fa-user"></i>
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        <div class="input-box">
+            <input type="password" name="password" id="password"
+                   placeholder="Votre mot de passe" required autocomplete="current-password">
+            <i class="fa-solid fa-lock"></i>
         </div>
 
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded dark:bg-gray-900 border-gray-300 dark:border-gray-700 text-indigo-600 shadow-sm focus:ring-indigo-500 dark:focus:ring-indigo-600 dark:focus:ring-offset-gray-800" name="remember">
-                <span class="ms-2 text-sm text-gray-600 dark:text-gray-400">{{ __('Remember me') }}</span>
+        <div class="remenber-forgot">
+            <label>
+                <input type="checkbox" name="remember"> Se souvenir de moi
             </label>
+            @if (Route::has('password.request'))
+                <a href="{{ route('password.request') }}">Mot de passe oublié</a>
+            @endif
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
+        <button type="submit" class="login-btn">Se connecter</button>
 
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
+        <div class="register-link">
+            <p>Pas de compte ? <a href="{{ route('register') }}">S'inscrire</a></p>
         </div>
     </form>
-</x-guest-layout>
+</section>
+
+</body>
+</html>

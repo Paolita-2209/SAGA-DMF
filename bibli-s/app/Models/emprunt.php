@@ -6,18 +6,21 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class emprunt extends Model
+class Emprunt extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'book_id',
-        'loaned_at',
-        'due_date',
-        'returned_at',
-        'status',
-    ];
+  protected $fillable = [
+    'user_id',
+    'book_id',
+    'borrower_name',
+    'borrower_phone',
+    'borrower_email',
+    'loaned_at',
+    'due_date',
+    'returned_at',
+    'status',
+];
 
     protected $casts = [
         'loaned_at'   => 'date',
@@ -25,31 +28,33 @@ class emprunt extends Model
         'returned_at' => 'date',
     ];
 
-    // Un emprunt appartient à un utilisateur
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
     }
 
-    // Un emprunt appartient à un livre
-    public function livres(): BelongsTo
+    public function membre(): BelongsTo
     {
-        return $this->belongsTo(livre::class);
+        return $this->belongsTo(Membre::class,);
     }
 
-    // Vérifie si l'emprunt est en retard
+    public function livre(): BelongsTo
+    {
+        return $this->belongsTo(Livre::class, 'book_id');
+    }
+
     public function isLate(): bool
     {
-        return $this->returned_at === null
-            && $this->due_date->isPast();
+        return $this->returned_at === null && $this->due_date->isPast();
     }
 
-    // Marque l'emprunt comme retourné
     public function markAsReturned(): void
     {
         $this->update([
             'returned_at' => now(),
             'status'      => 'retourné',
         ]);
+
+        $this->livre->increment('available_quantity');
     }
 }

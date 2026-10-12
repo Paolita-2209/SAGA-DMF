@@ -18,7 +18,12 @@ class AppServiceProvider extends ServiceProvider
      * Bootstrap any application services.
      */
     public function boot(): void
-    {
-        //
+{
+    if ($this->app->runningInConsole()) {
+        \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables = array_merge(
+            \Illuminate\Foundation\Console\ServeCommand::$passthroughVariables,
+            ['SystemRoot', 'SystemDrive', 'windir', 'TEMP', 'TMP', 'ComSpec', 'PATHEXT']
+        );
     }
+}
 }
